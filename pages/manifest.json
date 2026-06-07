@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "home.md",
+    "about.md",
+    "settings.md",
+    "contact.md",
+    "design/spatial.md",
+    "design/refraction.md"
+  ]
+}

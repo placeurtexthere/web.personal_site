@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaGlass Portal</title>
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & DESIGN SYSTEM (Apple "Liquid Glass" Theme)
+       ========================================================================== */
+    :root {
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.45);
+      --glass-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+      
+      /* Classic Aqua Gel Button Colors */
+      --gel-blue-bg: linear-gradient(to bottom, #7fc2f4 0%, #358cd2 49%, #1066af 50%, #1e87d8 100%);
+      --gel-blue-border: 1px solid rgba(13, 73, 125, 0.7);
+      --gel-blue-glow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 10px 12px rgba(255, 255, 255, 0.35);
+    }
+
+    /* ==========================================================================
+       2. BASE STYLES & BACKGROUND
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: var(--font-stack);
+      overflow: hidden;
+      color: #1d1d1f;
+      background: #000;
+    }
+
+    /* OS X Tiger / Leopard inspired Aurora wallpaper built dynamically using CSS */
+    .aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(circle at 20% 30%, #3054a3 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, #1c305c 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, #4facfe 0%, #00f2fe 70%);
+      background-size: cover;
+    }
+
+    /* Subtle CRT glass reflection layer overlaying the viewport */
+    .glass-reflection-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%);
+    }
+
+    /* ==========================================================================
+       3. LIQUID GLASS COMPONENTS
+       ========================================================================== */
+    /* Liquid Glass Card Container */
+    .glass-card {
+      background: var(--glass-bg);
+      border: var(--glass-border);
+      border-radius: 18px;
+      box-shadow: 
+        var(--glass-inner-glow),
+        0 1px 0 rgba(255, 255, 255, 0.2),
+        0 12px 28px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(20px);
+      -moz-backdrop-filter: blur(20px); /* Legacy fallback support */
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Specular Reflection Highlighting for Containers */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 100%);
+      pointer-events: none;
+      border-top-left-radius: 17px;
+      border-top-right-radius: 17px;
+      z-index: 1;
+    }
+
+    /* Classic Apple Gel-Button Utility */
+    .gel-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+      background: var(--gel-blue-bg);
+      border: var(--gel-blue-border);
+      border-radius: 20px;
+      box-shadow: var(--gel-blue-glow), 0 3px 6px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Distinct rounded gloss highlight bubble on top half of the gel button */
+    .gel-button::before {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 2%;
+      width: 96%;
+      height: 48%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.2) 100%);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .gel-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: var(--gel-blue-glow), 0 5px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .gel-button:active {
+      filter: brightness(0.9);
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ==========================================================================
+       4. MAIN LAYOUT
+       ========================================================================== */
+    #app-container {
+      display: grid;
+      grid-template-rows: 60px 1fr;
+      height: 100vh;
+      width: 100vw;
+      padding: 24px;
+      gap: 16px;
+    }
+
+    header.top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    /* Pseudo OS X System Window Dots */
+    .os-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      position: relative;
+    }
+    .dot::before {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      right: 1px;
+      height: 5px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 6px 6px 0 0;
+    }
+    .dot-close { background: #ff5f56; border: 1px solid #e0443e; }
+    .dot-min { background: #ffbd2e; border: 1px solid #dfa123; }
+    .dot-max { background: #27c93f; border: 1px solid #1aab29; }
+
+    main#content-viewport {
+      padding: 40px;
+      overflow-y: auto;
+      transition: opacity 0.3s ease-in-out;
+      scrollbar-width: thin; /* Firefox Native Standard */
+      scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.15); /* Firefox Scrollbar Track & Thumb Color */
+    }
+
+    /* Standard Webkit Fallback (Just in case rendering in chromium-based browsers occurs) */
+    main#content-viewport::-webkit-scrollbar {
+      width: 8px;
+    }
+    main#content-viewport::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    main#content-viewport::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    /* Dynamic page content transitions */
+    .page-content {
+      animation: fadeIn 0.4s ease-out;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .page-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-content p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* ==========================================================================
+       5. RIGHT FLOATING SIDE MENU (Slide-in)
+       ========================================================================== */
+    /* Dim overlay when the menu is active */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 90;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .glass-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100%;
+      z-index: 100;
+      border-radius: 0;
+      border-left: var(--glass-border);
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      transform: translate3d(100%, 0, 0); /* Optimized 3D transform acceleration */
+      will-change: transform; /* Hint layout optimization to Firefox Gecko Engine */
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .glass-sidebar.open {
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* Header Portion */
+    .sidebar-header {
+      padding: 30px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .sidebar-header h2 {
+      font-size: 1.5rem;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Body Portion: Tree Menu Navigation */
+    .sidebar-tree-container {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.25) rgba(0, 0, 0, 0.1);
+    }
+
+    /* Interactive Accordion Folders */
+    details.tree-node {
+      margin-bottom: 10px;
+    }
+
+    summary.tree-folder {
+      list-style: none; /* Hides default marker in Firefox */
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    summary.tree-folder::-webkit-details-marker {
+      display: none; /* WebKit compatibility fallback override */
+    }
+
+    summary.tree-folder::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 10px;
+      font-size: 10px;
+      transition: transform 0.2s ease;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    details[open] summary.tree-folder::before {
+      transform: rotate(90deg);
+    }
+
+    summary.tree-folder:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Sub-menu tree item list styling */
+    .tree-sub-list {
+      list-style: none;
+      padding-left: 15px;
+      margin-top: 6px;
+      border-left: 1px dashed rgba(255, 255, 255, 0.25);
+    }
+
+    .tree-sub-list li {
+      margin-bottom: 4px;
+    }
+
+    /* Standard Interactive Tree Node / Individual Leaf Node Link */
+    .tree-item {
+      display: block;
+      padding: 8px 14px;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    }
+
+    .tree-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* Highlight class signifying simulated OS active path selection */
+    .tree-item.active {
+      background: var(--gel-blue-bg);
+      border: var(--gel-blue-border);
+      box-shadow: var(--gel-blue-glow);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Footer Portion */
+    .sidebar-footer {
+      padding: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      text-align: center;
+    }
+
+    .sidebar-footer p {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.3px;
+    }
+
+    /* ==========================================================================
+       6. INTERFACE INTERACTION UTILITIES
+       ========================================================================== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 6px;
+    }
+    /* Liquid-Glass input styles */
+    .glass-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-family: var(--font-stack);
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+    }
+    .glass-input:focus {
+      border-color: rgba(79, 172, 254, 0.8);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(79, 172, 254, 0.5);
+    }
+
+    /* Animation Keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       7. RESPONSIVENESS
+       ========================================================================== */
+    @media (max-width: 768px) {
+      #app-container {
+        padding: 12px;
+        grid-template-rows: auto 1fr;
+      }
+      main#content-viewport {
+        padding: 24px;
+      }
+      .page-content h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Complex Dynamic CSS Aurora Canvas -->
+  <div class="aurora-bg"></div>
+  <div class="glass-reflection-overlay"></div>
+
+  <!-- Dim overlay to blur background elements when menu is open -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Primary Viewport Grid Layout -->
+  <div id="app-container">
+    
+    <!-- Top Global Apple Bar -->
+    <header class="top-bar glass-card">
+      <div class="os-dots">
+        <div class="dot dot-close"></div>
+        <div class="dot dot-min"></div>
+        <div class="dot dot-max"></div>
+      </div>
+      <button class="gel-button" id="menu-toggle-btn">
+        Menu ▾
+      </button>
+    </header>
+
+    <!-- Main Content Display Port -->
+    <main id="content-viewport" class="glass-card">
+      <div id="dynamic-target" class="page-content">
+        <!-- Javascript loads physical state representations here -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Right-Sided Floating Slide-in Navigation Sidebar -->
+  <nav class="glass-sidebar" id="floating-sidebar">
+    
+    <!-- Header Segment: Web Portal Name -->
+    <div class="sidebar-header">
+      <h2>AquaPortal</h2>
+    </div>
+
+    <!-- Scrollable Center Segment: Tree Directory Navigation -->
+    <div class="sidebar-tree-container">
+      
+      <!-- Folders / Directory Structures utilizing Firefox Native Details Summary style -->
+      <details class="tree-node" open>
+        <summary class="tree-folder">General</summary>
+        <ul class="tree-sub-list">
+          <li><a href="#home" class="tree-item">Welcome Home</a></li>
+          <li><a href="#about" class="tree-item">About System</a></li>
+        </ul>
+      </details>
+
+      <details class="tree-node">
+        <summary class="tree-folder">Services</summary>
+        <ul class="tree-sub-list">
+          <li><a href="#services/design" class="tree-item">Glass Design</a></li>
+          <li><a href="#services/dev" class="tree-item">Engine Dev</a></li>
+        </ul>
+      </details>
+
+      <details class="tree-node">
+        <summary class="tree-folder">Inquire</summary>
+        <ul class="tree-sub-list">
+          <li><a href="#contact" class="tree-item">Contact Us</a></li>
+        </ul>
+      </details>
+
+    </div>
+
+    <!-- Footer Segment: Copyright and Licensing Information -->
+    <div class="sidebar-footer">
+      <p>&copy; 2026 AquaPortal.</p>
+      <p>All Rights Reserved.</p>
+    </div>
+
+  </nav>
+
+  <!-- ==========================================================================
+       8. JAVASCRIPT STATE ROUTER & TOGGLE CONTROLLERS
+       ========================================================================== -->
+  <script>
+    // --------------------------------------------------------------------------
+    // Dynamic Page Database (Static Client-Side Content Map)
+    // --------------------------------------------------------------------------
+    const pages = {
+      'home': {
+        title: 'Welcome to AquaPortal',
+        html: `
+          <h1>Welcome to AquaPortal</h1>
+          <p>This workspace serves as a responsive showcase of Apple's late legacy <strong>"Liquid Glass" (Aqua-skeuomorphic)</strong> visual architecture. Optimized specifically to operate flawlessly inside Firefox-based rendering engines, this application employs pure standards-compliant layouts.</p>
+          <p>Every dynamic change you notice across this static environment processes client-side, while preserving perfect standard browser history functionality through specialized layout routing controllers.</p>
+          <div style="margin-top: 30px;">
+            <button class="gel-button" onclick="location.hash='#about'">Learn More</button>
+          </div>
+        `
+      },
+      'about': {
+        title: 'System Specifications',
+        html: `
+          <h1>About the System</h1>
+          <p>Historically, dynamic skeuomorphism required expensive assets and non-standard browser prefixes. This static portal is designed using performant, modern standard features. This implementation is tailored to standard Gecko engine capabilities, utilizing the following mechanics:</p>
+          <ul style="margin: 20px 0 20px 20px; line-height: 1.8; color: rgba(255,255,255,0.8);">
+            <li>Standardized performance rendering optimizations using hardware layers.</li>
+            <li>Custom SVG overlay layers creating realistic visual refraction lines.</li>
+            <li>No external framework dependencies whatsoever, resulting in zero hydration layout shifting.</li>
+          </ul>
+          <p>All navigation requests register natively, maintaining a single static physical address footprint perfectly.</p>
+        `
+      },
+      'services/design': {
+        title: 'Glass Design Aesthetics',
+        html: `
+          <h1>Glass Design Aesthetics</h1>
+          <p>The core elements of Apple's "Liquid Glass" rely on the balance of internal reflections, refraction boundaries, and depth. We recreate these design principles in a web browser with CSS:</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px;">
+            <div class="glass-card" style="padding: 20px; border-radius: 12px; backdrop-filter: none;">
+              <h3 style="margin-bottom: 10px; color: #fff;">Specular Reflection</h3>
+              <p style="font-size: 13px;">Using high-contrast overlays to split gradients, simulating a convex glass surface reflecting an overhead light source.</p>
+            </div>
+            <div class="glass-card" style="padding: 20px; border-radius: 12px; backdrop-filter: none;">
+              <h3 style="margin-bottom: 10px; color: #fff;">Radial Highlighting</h3>
+              <p style="font-size: 13px;">Leveraging concentrated base colors on primary elements, making components appear fluid and gel-like.</p>
+            </div>
+          </div>
+        `
+      },
+      'services/dev': {
+        title: 'Gecko Engine Optimization',
+        html: `
+          <h1>Firefox & Gecko Optimization</h1>
+          <p>Browsing environments differ. Firefox-based browsers require performance considerations when rendering nested filters and complex blurs concurrently. Our dynamic side-menu design implements elements constructed specifically to avoid common issues:</p>
+          <ul style="margin: 20px 0 20px 20px; line-height: 1.8; color: rgba(255,255,255,0.8);">
+            <li><strong>GPU Acceleration Hooks:</strong> Transforming layers strictly using 3D acceleration flags.</li>
+            <li><strong>Reduced Layout Trashing:</strong> Restricting layout properties inside complex transitions, ensuring stable frames.</li>
+            <li><strong>W3C Standard Styling:</strong> Using robust, modern native properties for custom scrollbar aesthetics.</li>
+          </ul>
+        `
+      },
+      'contact': {
+        title: 'Inquire and Connect',
+        html: `
+          <h1>Inquire and Connect</h1>
+          <p>Please enter your data inside our glass-molded forms. We will process your response entirely within our client-side sandbox environment.</p>
+          <form style="margin-top: 25px; max-width: 450px;" onsubmit="event.preventDefault(); alert('Query successfully simulation-processed!');">
+            <div class="form-group">
+              <label for="name">Identity Name</label>
+              <input type="text" id="name" class="glass-input" required placeholder="User-Name">
+            </div>
+            <div class="form-group">
+              <label for="email">Digital Address</label>
+              <input type="email" id="email" class="glass-input" required placeholder="name@domain.com">
+            </div>
+            <div class="form-group">
+              <label for="msg">Message Content</label>
+              <textarea id="msg" class="glass-input" style="min-height: 80px; resize: vertical;" required placeholder="Type something..."></textarea>
+            </div>
+            <button class="gel-button" type="submit">Submit Request</button>
+          </form>
+        `
+      }
+    };
+
+    // --------------------------------------------------------------------------
+    // Routing Controller (State/Content Dispatcher)
+    // --------------------------------------------------------------------------
+    const dynamicTarget = document.getElementById('dynamic-target');
+
+    function routePage() {
+      // Isolate current state. Extract '#' and query elements
+      const hash = window.location.hash.substring(1) || 'home';
+      const page = pages[hash];
+
+      if (page) {
+        // Smoothly fade out the current content
+        dynamicTarget.style.opacity = '0';
+        
+        setTimeout(() => {
+          // Dynamically load page content
+          dynamicTarget.innerHTML = page.html;
+          document.title = `${page.title} | AquaPortal`;
+          
+          // Re-fade layout content in
+          dynamicTarget.style.opacity = '1';
+          
+          // Sync navigation states and apply high-contrast focus styles to active items
+          updateActiveTreeState(hash);
+        }, 200);
+      } else {
+        // Routing Fallback - Redirect immediately to Home if page is not found
+        window.location.hash = '#home';
+      }
+    }
+
+    function updateActiveTreeState(activeHash) {
+      const treeLinks = document.querySelectorAll('.tree-item');
+      treeLinks.forEach(link => {
+        const linkHash = link.getAttribute('href').substring(1);
+        if (linkHash === activeHash) {
+          link.classList.add('active');
+          // Automatically keep container directory open if it is a nested item
+          const parentDetails = link.closest('details');
+          if (parentDetails) {
+            parentDetails.open = true;
+          }
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    // Attach Native Window Observers
+    window.addEventListener('hashchange', routePage);
+    window.addEventListener('DOMContentLoaded', routePage);
+
+    // --------------------------------------------------------------------------
+    // Floating Right-Side Menu Toggle Controller
+    // --------------------------------------------------------------------------
+    const sidebar = document.getElementById('floating-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const toggleBtn = document.getElementById('menu-toggle-btn');
+
+    function toggleSidebar() {
+      const isOpen = sidebar.classList.toggle('open');
+      overlay.classList.toggle('active', isOpen);
+      toggleBtn.innerHTML = isOpen ? 'Close ▴' : 'Menu ▾';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      toggleBtn.innerHTML = 'Menu ▾';
+    }
+
+    toggleBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    // Auto-close menu drawer when selecting menu items to streamline user flows
+    const treeMenuLinks = document.querySelectorAll('.tree-item');
+    treeMenuLinks.forEach(link => {
+      link.addEventListener('click', closeSidebar);
+    });
+  </script>
+</body>
+</html>

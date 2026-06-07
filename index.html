@@ -1,377 +1,1293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collapsible Sidebar Overlay - Retro Theme</title>
-    <!-- Load Lucide Icons for the toggle icon -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass Portal</title>
+  
+  <!-- Standard zero-dependency Markdown Parser for high-fidelity Firefox rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & DESIGN SYSTEM (OS 26 "Liquid Glass" Spatial Theme)
+       ========================================================================== */
+    :root {
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      
+      /* Pure Glass Layering values */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-blur: blur(28px) saturate(220%);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+      
+      /* High contrast values */
+      --text-primary: rgba(255, 255, 255, 0.95);
+      --text-secondary: rgba(255, 255, 255, 0.65);
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
+      /* Custom Dynamic Wallpaper Defaults */
+      --bg-color-1: #180B34;
+      --bg-color-2: #0B1934;
+      --bg-color-3: #1A031E;
+      --bg-angle: 135deg;
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+      /* Softened Cursor Glow settings */
+      --glow-color: rgba(255, 255, 255, 0.35);
+      --glow-intensity: 0.15;
+      --glow-diameter: 120px;
+    }
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    /* ==========================================================================
+       2. BASE STYLES & WALLPAPER (2026 Abstract Mesh Theme)
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    html {
+      scroll-behavior: smooth;
+    }
 
-    <style>
-        /* 1. Global & Theme Styles */
-        :root {
-            --primary-color: rgb(203, 149, 88); /* Brown/Handle color */
-            --secondary-color: #07875c; /* Peach/Accent background */
-            --sidebar-width: 18rem; /* 288px */
-            --handle-width: 2.25rem; /* 36px */
-            --handle-height: 5rem;  /* 80px */
-            --transition-speed: 0.3s;
-        }
+    body {
+      min-height: 100vh;
+      font-family: var(--font-stack);
+      overflow-y: auto; /* Standard window scrolling for Firefox rendering */
+      color: #1d1d1f;
+      background: #04040a;
+      transition: background-color 0.4s ease;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            color: #07875c; /* rgb(226, 101, 149) */
-        }
+    /* Spatial dynamic gradient wallpaper (Animation disabled by request) */
+    .mesh-wallpaper {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(var(--bg-angle), var(--bg-color-1) 0%, var(--bg-color-2) 50%, var(--bg-color-3) 100%);
+      transition: background 0.4s ease;
+    }
 
-        html {
-            width: 100%;
-            height: 100%;
-            font-family: 'Times New Roman', Times, serif;
-        }
+    /* ==========================================================================
+       3. 2026 LIQUID GLASS RENDERING (Gecko Engine Optimized)
+       ========================================================================== */
+    .liquid-glass {
+      background: var(--glass-bg);
+      border: var(--glass-border);
+      border-radius: 24px; /* Distinct organic curved corners of 2026 OS */
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      position: relative; /* Keeps coordinates mapped inside borders */
+      
+      /* Spatial Double-Rim Edge Highlighting (Simulates glass bezel refraction) */
+      box-shadow: 
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.35), /* Highlight Rim */
+        inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1), /* Bevel glow */
+        0 12px 32px 0 rgba(0, 0, 0, 0.25),         /* Soft outer shadow */
+        0 1px 3px 0 rgba(0, 0, 0, 0.15);
+      
+      transition: 
+        backdrop-filter 0.3s ease, 
+        background-color 0.3s ease, 
+        border-color 0.3s ease, 
+        box-shadow 0.4s var(--transition-spring);
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #1B365C; /* rgb(226, 187, 101) */
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-        }
+    /* Subtle dynamic light refraction inside liquid glass bounds */
+    .liquid-glass::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle var(--glow-diameter) at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--glow-color), transparent 100%);
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
 
-        /* 3. Main Content Area Styling (Always full screen) */
-        .main-content-area {
-            width: 100vw;
-            height: 100vh;
-            padding: 2rem;
-            overflow-y: auto;
-            transition: padding var(--transition-speed) ease-in-out;
-            background-color: #1B365C;
-            border: 4px ridge black;
-            min-width: 0;
-            min-height: 0;
-        }
+    body.cursor-glow-active .liquid-glass:hover::after {
+      opacity: var(--glow-intensity);
+    }
 
-        /* Content placeholder inside main area */
-        .main-content-placeholder {
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-        }
+    /* Keeps structural segments above custom radial-glow canvas layer */
+    .header-logo, 
+    .header-controls, 
+    .viewport-content, 
+    .sidebar-top, 
+    .sidebar-tree, 
+    .sidebar-bottom {
+      position: relative;
+      z-index: 2;
+    }
 
-        .main-content-placeholder h1 {
-            font-size: 2rem;
-            font-weight: bold;
-            color: black;
-            margin-bottom: 0.5rem;
-        }
+    /* Specular light hover response */
+    .liquid-glass:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+        0 16px 40px 0 rgba(0, 0, 0, 0.35);
+    }
 
-        .main-content-placeholder p {
-            color: #dddddd;
-        }
+    /* ==========================================================================
+       4. MAIN OVERLAPPING LAYOUT (Fixed Header / Scrolling Viewport)
+       ========================================================================== */
+    #app-container {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        /* 4. Sidebar Styling (ALWAYS Fixed, Default Closed) */
-        .sidebar-menu {
-            position: fixed;
-            top: 0;
-            /* Start closed: Position so only the 2.25rem handle width is visible and flush right. */
-            right: calc(-1 * (var(--sidebar-width) + var(--handle-width)));
-            width: var(--sidebar-width);
-            height: 100vh;
+    /* Pinned Header split across two sections: Left Logo, Right Controls */
+    header.nav-panel {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      height: 64px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      max-width: 1360px;
+      margin: 0 auto;
+    }
 
-            /* The sidebar itself is the white box now, eliminating the "brown strip" issue */
-            background-color: #1B365C;
-            border-left: 4px ridge black;
+    /* Brand Logo design elements inside Top Bar */
+    .header-logo {
+      display: flex;
+      align-items: center;
+    }
 
-            z-index: 40;
-            transition: right var(--transition-speed) ease-in-out;
-        }
+    .logo-link {
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      transition: opacity 0.2s ease;
+    }
 
-        /* Inner background div removed, content padding applied here */
-        .sidebar-content {
-            padding: 1.5rem;
-            position: relative;
-            z-index: 41;
-            transform: none;
-            transition: none;
-        }
+    .logo-link:hover {
+      opacity: 0.85;
+    }
 
-        /* Open State: Sidebar slides fully into view, flush right */
-        body.sidebar-open .sidebar-menu {
-            right: 0;
-        }
+    /* Header Controls layout containing Search + Menu Button */
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .sidebar-content .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: black;
-            margin-bottom: 2rem;
-        }
+    /* ==========================================================================
+       5. GLOBAL CONTAINER SEARCH ENGINE
+       ========================================================================== */
+    .search-container {
+      position: relative;
+    }
 
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+    /* Magnifier Glyph background */
+    .search-container::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
 
-        /* Navigation Links */
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 12px 16px;
-            border-radius: 0;
-            color: black;
-            text-decoration: none;
-            font-weight: bold;
-            border: 4px ridge black;
-            background-color: rgb(177, 177, 177);
-            transition: background-color var(--transition-speed), color var(--transition-speed);
-        }
+    .glass-search-input {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 8px 14px 8px 32px;
+      color: #fff;
+      font-family: var(--font-stack);
+      font-size: 13px;
+      outline: none;
+      width: 180px;
+      transition: all 0.3s var(--transition-spring);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
 
-        .sidebar-nav a:hover {
-            background-color: grey;
-            color: black;
-        }
+    .glass-search-input:focus {
+      width: 250px;
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 12px rgba(255, 255, 255, 0.1);
+    }
 
-        .sidebar-nav a.active {
-            background-color: grey;
-            color: black;
-            font-weight: bold;
-        }
+    /* Floating Dropdown Results Map card placement */
+    .search-results-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 280px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none; /* Controlled dynamically inside routing scripts */
+      flex-direction: column;
+      padding: 8px;
+      z-index: 1000;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    }
 
-        /* 5. Toggle Handle/Button Styling (Uses SVG for shape) */
-        .toggle-handle {
-            position: absolute;
-            top: 5%;
-            transform: translateY(-50%);
+    .search-results-dropdown.active {
+      display: flex;
+    }
 
-            /* Positioned to the LEFT of the white sidebar container */
-            left: calc(-1 * var(--handle-width));
-            right: auto;
+    .search-result-item {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: background 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
 
-            width: var(--handle-width);
-            height: var(--handle-height);
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
 
-            z-index: 50; /* Ensure it's above everything */
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            outline: none;
-        }
+    .search-result-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
 
-        /* The SVG Shape itself (defines the blended appearance) */
-        .handle-shape {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            filter: none;
-            transition: all 0.2s ease-in-out;
-        }
+    .search-result-title {
+      font-weight: 600;
+      color: #fff;
+    }
 
-        .handle-shape path {
-            fill: var(--primary-color);
-            stroke: black;
-            stroke-width: 4;
-            /* Path: Flush on the right (to blend into the sidebar), rounded on the left (the pull tab) */
-            d: path("M 30 0 H 10 A 10 10 0 0 0 0 10 V 70 A 10 10 0 0 0 10 80 H 30 V 0 Z");
-        }
+    .search-result-excerpt {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        /* The Lucide Icon (positioned over the SVG shape) */
-        .toggle-icon {
-            z-index: 51;
-            width: 1.5rem;
-            height: 1.5rem;
-            color: black;
-            transition: transform var(--transition-speed) ease-in-out;
-        }
+    .search-no-results {
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
 
-        /* Icon Rotation: Points left (0deg) when closed (to suggest opening) */
-        .sidebar-menu .toggle-icon {
-            transform: rotate(0deg);
-        }
+    /* Menu Toggle Button Style */
+    .menu-toggle {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 18px;
+      border-radius: 30px;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 13.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.2s var(--transition-spring);
+    }
 
-        /* Open: Icon points right (180deg) to suggest pushing it closed */
-        body.sidebar-open .sidebar-menu .toggle-icon {
-            transform: rotate(180deg);
-        }
+    .menu-toggle:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
 
-        /* 7. Responsive Styles (Large Screen - 1024px and up) */
-        @media (min-width: 1024px) {
-            .sidebar-menu {
-                right: calc(-1 * var(--sidebar-width));
-            }
+    /* Viewport Area follows standard document flow, offset to start exactly below the header gap */
+    main#viewport {
+      margin-top: 84px; /* 64px header height + 20px separation gap */
+      min-height: calc(100vh - 124px); /* Fills window height minus outer top/bottom spacing */
+      padding: 40px;
+    }
 
-            body.sidebar-open .sidebar-menu {
-                right: 0;
-            }
-        }
+    .viewport-content {
+      color: var(--text-primary);
+      max-width: 800px;
+      line-height: 1.6;
+      padding: 30px 40px 40px 40px;
+      flex-grow: 1;
+    }
 
-        /* 8. Responsive Padding Adjustment (Medium Screen - 768px and up) */
-        @media (min-width: 768px) {
-            .main-content-area {
-                padding: 2rem;
-            }
-        }
+    .viewport-content h1, 
+    .viewport-content h2, 
+    .viewport-content h3 {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+      color: #fff;
+    }
 
-        .birthstone-regular {
-            font-family: "Birthstone", cursive;
-            font-weight: 400;
-            font-style: normal;
-        }
+    .viewport-content h1 { font-size: 2.2rem; }
+    .viewport-content h2 { font-size: 1.8rem; margin-top: 30px; }
 
-        /* <weight>: Use a value from 400 to 700 */
-        /* <uniquifier>: Use a unique and descriptive class name */
+    .viewport-content p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      font-size: 1.05rem;
+    }
 
-        .dancing-script-medium {
-            font-family: "Dancing Script", cursive;
-            font-optical-sizing: auto;
-            font-weight: medium; /* 500 */
-            font-style: normal;
-        }
+    .viewport-content ul, 
+    .viewport-content ol {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+    }
 
-    </style>
+    .viewport-content li {
+      margin-bottom: 8px;
+    }
+
+    /* ==========================================================================
+       6. SPATIAL FLOATING SIDE MENU (Right Aligned)
+       ========================================================================== */
+    .blur-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s var(--transition-spring);
+      z-index: 90;
+    }
+    .blur-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Suspended layout floating card */
+    .floating-sidebar {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      bottom: 20px;
+      width: 320px;
+      height: calc(100vh - 40px);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transform: translate3d(360px, 0, 0);
+      will-change: transform;
+      transition: transform 0.4s var(--transition-spring);
+    }
+
+    .floating-sidebar.open {
+      transform: translate3d(0, 0, 0);
+    }
+
+    .sidebar-top {
+      padding: 30px 24px 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-top h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    /* Tree Directory Structure */
+    .sidebar-tree {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      scrollbar-width: none;
+    }
+
+    .tree-node {
+      margin-bottom: 12px;
+    }
+
+    .tree-heading {
+      list-style: none; /* Hide standard Firefox details arrows */
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+
+    .tree-heading::-webkit-details-marker {
+      display: none; /* Webkit override fallback */
+    }
+
+    .tree-heading::before {
+      content: '▸';
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      transition: transform 0.2s ease;
+    }
+
+    .tree-node[open] .tree-heading::before {
+      transform: rotate(90deg);
+    }
+
+    .tree-heading:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tree-sub-group {
+      list-style: none;
+      padding-left: 14px;
+      margin-top: 4px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .tree-link {
+      display: block;
+      padding: 6px 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      border-radius: 8px;
+      margin-top: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .tree-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Light, high-saturation indicator bubble */
+    .tree-link.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      font-weight: 500;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Sidebar Bottom aligned as a flexbox row */
+    .sidebar-bottom {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-legal {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sidebar-legal p {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: left;
+    }
+
+    /* Settings Trigger Cogwheel */
+    .settings-trigger {
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .settings-trigger:hover {
+      color: #fff;
+      transform: rotate(45deg);
+    }
+
+    /* ==========================================================================
+       7. LIGHT MODE CUSTOM STYLING PROPERTIES
+       ========================================================================== */
+    body.light-mode {
+      background: #f5f5f7;
+      --glow-color: rgba(255, 255, 255, 0.18);
+    }
+    body.light-mode .mesh-wallpaper {
+      background: linear-gradient(var(--bg-angle), var(--bg-color-1) 0%, var(--bg-color-2) 50%, var(--bg-color-3) 100%);
+    }
+    body.light-mode .liquid-glass {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-shadow: 
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        0 12px 32px 0 rgba(0, 0, 0, 0.08);
+    }
+    body.light-mode header.nav-panel {
+      background: rgba(255, 255, 255, 0.4);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    body.light-mode .logo-link {
+      color: #1d1d1f;
+    }
+    body.light-mode .glass-search-input {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.12);
+      color: #1d1d1f;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    body.light-mode .glass-search-input:focus {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+    body.light-mode .search-results-dropdown {
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    }
+    body.light-mode .search-result-item {
+      border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+    body.light-mode .search-result-item:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    body.light-mode .search-result-title {
+      color: #1d1d1f;
+    }
+    body.light-mode .menu-toggle {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #1d1d1f;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 8px rgba(0,0,0,0.06);
+    }
+    body.light-mode .menu-toggle:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.18);
+    }
+    body.light-mode .tree-heading { color: #1d1d1f; }
+    body.light-mode .tree-heading:hover { background: rgba(0, 0, 0, 0.04); }
+    body.light-mode .tree-link { color: rgba(0, 0, 0, 0.65); }
+    body.light-mode .tree-link:hover { background: rgba(0, 0, 0, 0.04); color: #000; }
+    body.light-mode .tree-link.active {
+      background: rgba(0, 0, 0, 0.08);
+      color: #000;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.05);
+    }
+    body.light-mode .sidebar-top h2 { color: #1d1d1f; }
+    body.light-mode .sidebar-bottom p { color: rgba(0, 0, 0, 0.5); }
+    body.light-mode .settings-trigger { color: rgba(0, 0, 0, 0.45); }
+    body.light-mode .settings-trigger:hover { color: #000; }
+    body.light-mode .viewport-content h1, 
+    body.light-mode .viewport-content h2, 
+    body.light-mode .viewport-content h3 { color: #1d1d1f; }
+    body.light-mode .viewport-content p,
+    body.light-mode .viewport-content ul,
+    body.light-mode .viewport-content ol { color: rgba(0, 0, 0, 0.7); }
+
+    /* UI Setting Panel Widgets */
+    .control-widget {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .widget-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: var(--text-primary);
+      padding: 8px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .widget-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .widget-btn.active {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    body.light-mode .widget-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #1d1d1f;
+    }
+    body.light-mode .widget-btn:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.18);
+    }
+    body.light-mode .widget-btn.active {
+      background: rgba(0, 0, 0, 0.12);
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .form-group {
+      margin-top: 18px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    body.light-mode .form-group label { color: rgba(0, 0, 0, 0.6); }
+
+    .glass-field {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
+      font-family: var(--font-stack);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    body.light-mode .glass-field {
+      background: rgba(255, 255, 255, 0.6);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #1d1d1f;
+    }
+
+    .glass-field:focus {
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    }
+    body.light-mode .glass-field:focus { border-color: rgba(0, 0, 0, 0.3); }
+
+    /* Dynamic viewport animation */
+    .fade-switch {
+      animation: viewportSwitch 0.4s var(--transition-spring);
+    }
+
+    @keyframes viewportSwitch {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       9. RESPONSIVE DESIGN ADJUSTMENTS
+       ========================================================================== */
+    @media (max-width: 768px) {
+      #app-container {
+        padding: 10px;
+      }
+      header.nav-panel {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        height: 54px;
+        padding: 0 16px;
+      }
+      .logo-link {
+        font-size: 1rem;
+      }
+      .glass-search-input {
+        width: 110px;
+        font-size: 11px;
+        padding-left: 26px;
+      }
+      .glass-search-input:focus {
+        width: 140px;
+      }
+      .search-results-dropdown {
+        width: 220px;
+      }
+      main#viewport {
+        margin-top: 74px; /* 54px header + 20px gap */
+        min-height: calc(100vh - 94px);
+        padding: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- MAIN CONTENT AREA (Now full screen in the background) -->
-    <main id="main-content" class="main-content-area">
-        <div class="main-content-placeholder">
-            <h1>This layout is only experimental!</h1>
-            <p>The main content now fills the entire viewport ($100vw, $100vh$).</p>
-            <p style="margin-top: 2rem; padding: 1rem; border: 4px ridge black; background-color: var(--secondary-color);">
-                Site under construction!
-            </p>
-            <p>Current screen width: <span id="width-display"></span>px</p>
+  <!-- Mesh wallpaper representing OS 26 colors -->
+  <div class="mesh-wallpaper"></div>
+  <div class="blur-overlay" id="blur-overlay"></div>
+
+  <!-- Main static wrap container -->
+  <div id="app-container">
+    
+    <!-- Isolated Pinned Fixed Header sitting globally above content -->
+    <header class="nav-panel liquid-glass">
+      
+      <!-- Top Bar Left Side Brand Logo -->
+      <div class="header-logo">
+        <a href="#home" class="logo-link">AquaPortal</a>
+      </div>
+
+      <!-- Top Bar Right Side Search and Menu Toggle -->
+      <div class="header-controls">
+        <div class="search-container">
+          <input type="text" id="global-search" class="glass-search-input" placeholder="Search system..." autocomplete="off">
+          <div id="search-results" class="search-results-dropdown liquid-glass">
+            <!-- Dynamic search results populated by script -->
+          </div>
         </div>
+        <button class="menu-toggle" id="menu-toggle-btn">
+          <span>Menu</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12h16M4 6h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+    </header>
+
+    <!-- Main Card Viewport Container -->
+    <main id="viewport" class="liquid-glass">
+      <div id="dynamic-target" class="viewport-content fade-switch">
+        <!-- Render target -->
+      </div>
     </main>
 
-    <!-- RIGHT SIDEBAR MENU (Always Fixed/Hovering) -->
-    <aside id="sidebar" class="sidebar-menu">
+  </div>
 
-        <!-- COLLAPSE TOGGLE HANDLE (Uses SVG for shape, DIV for click/structure) -->
-        <div id="sidebar-toggle"
-                class="toggle-handle"
-                role="button"
-                tabindex="0"
-                aria-expanded="false"
-                aria-controls="sidebar">
+  <!-- Suspended Side Menu Floating Panel -->
+  <nav class="floating-sidebar liquid-glass" id="sidebar-panel">
+    <div class="sidebar-top">
+      <h2>AquaPortal</h2>
+    </div>
 
-            <!-- SVG Shape (ViewBox is 30 units wide and 80 units high) -->
-            <svg viewBox="0 0 30 80" class="handle-shape">
-                <!-- Path: Creates a shape that is rounded on the left side (hanging off) and flush on the right (blended into the sidebar). -->
-                <path d="M 30 0 H 10 A 10 10 0 0 0 0 10 V 70 A 10 10 0 0 0 10 80 H 30 V 0 Z" />
-            </svg>
+    <!-- Tree list utilizing Firefox-standard details element semantics (Populated Dynamically) -->
+    <div class="sidebar-tree">
+      <!-- Generated at Runtime -->
+    </div>
 
-            <!-- Lucide Icon: Permanently set to chevron-left, relying on CSS rotation -->
-            <i data-lucide="chevron-left" id="toggle-icon" class="toggle-icon"></i>
-        </div>
+    <!-- Footer of Sidebar with horizontal layout: legal and cogwheel -->
+    <div class="sidebar-bottom">
+      <div class="sidebar-legal">
+        <p>&copy; 2026 AquaPortal.</p>
+        <p>All rights reserved.</p>
+      </div>
+      <a href="#settings" class="settings-trigger" id="settings-cog" aria-label="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </a>
+    </div>
+  </nav>
 
-        <div class="sidebar-content">
-            <div class="title dancing-script-medium" style="font-size: 60px; color: #07875c;">
-                illyes.tech
-            </div>
+  <!-- ==========================================================================
+       10. ROUTING CONTROLLERS, SEARCH ENGINE & CONFIGURATION
+       ========================================================================== */ -->
+  <script>
+    // Populated at runtime after loading pages/ files
+    const pagesData = {};
+    
+    // Globally saved list of catalog file paths from pages/manifest.json
+    let manifestPages = [];
 
-            <nav class="sidebar-nav">
-                <a href="#">
-                    <i data-lucide="layout-dashboard" class="toggle-icon"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#">
-                    <i data-lucide="line-chart" class="toggle-icon"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#" class="active">
-                    <i data-lucide="users" class="toggle-icon"></i>
-                    <span>Team (Active)</span>
-                </a>
-                <a href="#">
-                    <i data-lucide="file-text" class="toggle-icon"></i>
-                    <span>Documents</span>
-                </a>
-                <a href="#">
-                    <i data-lucide="settings" class="toggle-icon"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-        </div>
+    // --------------------------------------------------------------------------
+    // Cookie Utility Handlers (Session Persistence Layer)
+    // --------------------------------------------------------------------------
+    function setCookie(name, value, days = 365) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + value + ";" + expires + ";path=/;SameSite=Strict";
+    }
 
-    </aside>
-
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Get elements
-        const body = document.body;
-        const toggleHandle = document.getElementById('sidebar-toggle');
-        const widthDisplay = document.getElementById('width-display');
-
-        // Function to update width display
-        function updateWidthDisplay() {
-            widthDisplay.textContent = window.innerWidth;
+    function getCookie(name) {
+      const keyString = name + "=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const cookieSegments = decodedCookie.split(';');
+      for (let i = 0; i < cookieSegments.length; i++) {
+        let segment = cookieSegments[i].trim();
+        if (segment.indexOf(keyString) === 0) {
+          return segment.substring(keyString.length, segment.length);
         }
+      }
+      return "";
+    }
 
-        // Check for large screen size (match CSS media query: 1024px)
-        const isDesktop = () => window.innerWidth >= 1024;
+    // --------------------------------------------------------------------------
+    // Pre-Paint Bootstrap (Prevents visual layout flashes prior to DOM render)
+    // --------------------------------------------------------------------------
+    function loadSettingsFromCookies() {
+      // 1. Theme Mode
+      if (getCookie('light-mode') === 'true') {
+        document.body.classList.add('light-mode');
+      }
+      
+      // 2. Cursor Glow Active state
+      if (getCookie('cursor-glow') !== 'false') {
+        document.body.classList.add('cursor-glow-active');
+      }
 
-        let isSidebarOpen = false; // Initialize to false. Initial state will be set in window.load
+      // 3. Cursor Glow Intensity
+      const intensity = getCookie('glow-intensity') || '0.15';
+      document.documentElement.style.setProperty('--glow-intensity', intensity);
 
-        // Function to toggle the sidebar state
-        function toggleSidebar() {
-            isSidebarOpen = !isSidebarOpen;
+      // 4. Cursor Glow Diameter
+      const diameter = getCookie('glow-diameter') || '120';
+      document.documentElement.style.setProperty('--glow-diameter', diameter + 'px');
 
-            // Apply state directly to the body for all screen sizes
-            body.classList.toggle('sidebar-open', isSidebarOpen);
+      // 5. Custom Wallpaper Colors
+      const color1 = getCookie('bg-color-1') || '#180B34';
+      const color2 = getCookie('bg-color-2') || '#0B1934';
+      const color3 = getCookie('bg-color-3') || '#1A031E';
+      const angle = getCookie('bg-angle') || '135';
 
-            // Update accessibility attributes based on new state
-            toggleHandle.setAttribute('aria-expanded', isSidebarOpen ? 'true' : 'false');
-        }
+      document.documentElement.style.setProperty('--bg-color-1', color1);
+      document.documentElement.style.setProperty('--bg-color-2', color2);
+      document.documentElement.style.setProperty('--bg-color-3', color3);
+      document.documentElement.style.setProperty('--bg-angle', angle + 'deg');
+    }
+    
+    loadSettingsFromCookies();
 
-        // --- Initial Load Setup and Event Listeners ---
+    // --------------------------------------------------------------------------
+    // Metadata Parser (YAML Front Matter Delimiter Decoder)
+    // --------------------------------------------------------------------------
+    function parseFrontMatter(text) {
+      const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+      if (match) {
+        const yamlBlock = match[1];
+        const content = match[2];
+        const metadata = {};
+        yamlBlock.split(/\r?\n/).forEach(line => {
+          const parts = line.split(':');
+          if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const value = parts.slice(1).join(':').trim().replace(/^['"]|['"]$/g, '');
+            metadata[key] = value;
+          }
+        });
+        return { metadata, content };
+      }
+      return { metadata: {}, content: text };
+    }
 
-        window.addEventListener('load', () => {
-            updateWidthDisplay();
-            // Default desktop state is open, mobile is closed.
-            isSidebarOpen = isDesktop();
+    // --------------------------------------------------------------------------
+    // Initialization Engine (Loads Content Async from manifest.json)
+    // --------------------------------------------------------------------------
+    async function initSystem() {
+      try {
+        // Fetch pages catalog mapping from the relative server directory
+        const manifestResponse = await fetch('pages/manifest.json');
+        if (!manifestResponse.ok) throw new Error('Could not retrieve pages/manifest.json catalog.');
+        const manifest = await manifestResponse.json();
+        manifestPages = manifest.pages || []; // Retain catalog order array
 
-            // Apply initial state
-            body.classList.toggle('sidebar-open', isSidebarOpen);
-            toggleHandle.setAttribute('aria-expanded', isSidebarOpen ? 'true' : 'false');
+        const loadPromises = manifestPages.map(async (filePath) => {
+          try {
+            const response = await fetch(`pages/${filePath}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const text = await response.text();
+            const parsed = parseFrontMatter(text);
+            
+            const route = filePath.replace('.md', '');
+            const title = parsed.metadata.title || route.split('/').pop().toUpperCase();
+            
+            pagesData[route] = {
+              title: title,
+              html: marked.parse(parsed.content), // Parse Markdown content using marked.js
+              path: filePath
+            };
+          } catch (e) {
+            console.error(`Failed to load page: ${filePath}`, e);
+          }
         });
 
-        // 2. Handle screen resize
-        window.addEventListener('resize', () => {
-            updateWidthDisplay();
-            // We only need to ensure the body class is set correctly based on the current toggle state.
-            body.classList.toggle('sidebar-open', isSidebarOpen);
+        await Promise.all(loadPromises);
+        
+        // Build tree menu structure dynamically (preserving JSON index positions)
+        buildSidebarMenu();
+        
+        // Process starting routing operations
+        handleRoute();
+      } catch (e) {
+        console.error('System initialization failed:', e);
+      }
+    }
+
+    // Initialize system when layout scripts are active
+    window.addEventListener('DOMContentLoaded', initSystem);
+
+    // --------------------------------------------------------------------------
+    // Order-Preserving Tree Builder
+    // Generates directory hierarchy based strictly on index order of manifest.json
+    // --------------------------------------------------------------------------
+    function buildPreservedTree(loadedPages) {
+      const fileTree = { items: [] };
+
+      loadedPages.forEach(page => {
+        if (page.path === 'settings.md') return; // Exclude settings page from catalog tree
+
+        const parts = page.path.split('/');
+        let current = fileTree;
+
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          const isLast = (i === parts.length - 1);
+
+          if (isLast) {
+            // It is an endpoint file path
+            current.items.push({ type: 'file', page });
+          } else {
+            // It is a directory pathway. Check if directory exists in node item order
+            let dirItem = current.items.find(item => item.type === 'dir' && item.name === part);
+            if (!dirItem) {
+              dirItem = { type: 'dir', name: part, node: { items: [] } };
+              current.items.push(dirItem);
+            }
+            current = dirItem.node;
+          }
+        }
+      });
+
+      return fileTree;
+    }
+
+    function buildSidebarMenu() {
+      const container = document.querySelector('.sidebar-tree');
+      if (!container) return;
+      
+      // Map stored pages to align with the order of index pathways defined in manifestPages
+      const loadedPages = manifestPages.map(filePath => {
+        const route = filePath.replace('.md', '');
+        const page = pagesData[route];
+        return page ? { route, title: page.title, path: page.path } : null;
+      }).filter(p => p !== null);
+
+      // Build hierarchical tree preserving manifest order index mapping
+      const fileTree = buildPreservedTree(loadedPages);
+
+      renderTree(fileTree, container);
+      
+      // Re-attach sidebar slide-out toggles to newly generated dynamic links
+      document.querySelectorAll('.tree-link').forEach(link => {
+        link.addEventListener('click', closeSidebar);
+      });
+    }
+
+    function renderTree(tree, container) {
+      container.innerHTML = '';
+      
+      tree.items.forEach(item => {
+        if (item.type === 'file') {
+          // Render isolated single file link natively inside current depth container
+          const link = document.createElement('a');
+          link.href = `#${item.page.route}`;
+          link.className = 'tree-link';
+          link.textContent = item.page.title;
+          container.appendChild(link);
+        } else if (item.type === 'dir') {
+          // Render subdirectory node structure and process subitems
+          const details = document.createElement('details');
+          details.className = 'tree-node';
+          details.open = true; // Categories open automatically
+          
+          const summary = document.createElement('summary');
+          summary.className = 'tree-heading';
+          summary.textContent = item.name.charAt(0).toUpperCase() + item.name.slice(1);
+          details.appendChild(summary);
+          
+          const subGroup = document.createElement('div');
+          subGroup.className = 'tree-sub-group';
+          
+          // Recurse directory sub-items preserving exact array order
+          renderTree(item.node, subGroup);
+          
+          details.appendChild(subGroup);
+          container.appendChild(details);
+        }
+      });
+    }
+
+    // --------------------------------------------------------------------------
+    // Page Routing and Content Transition Controllers
+    // --------------------------------------------------------------------------
+    const target = document.getElementById('dynamic-target');
+
+    function handleRoute() {
+      const hash = window.location.hash.substring(1) || 'home';
+      const page = pagesData[hash];
+
+      if (page) {
+        // Reset scroll position of window instantly on page transition
+        window.scrollTo(0, 0);
+
+        // Apply smooth transition animations
+        target.classList.remove('fade-switch');
+        void target.offsetWidth; // Force element reflow
+        target.innerHTML = page.html;
+        target.classList.add('fade-switch');
+
+        document.title = `${page.title} | AquaPortal`;
+        syncNavigationState(hash);
+        syncWidgetState();
+      } else {
+        // If system hasn't finished loading yet, skip redirect to prevent race conditions
+        if (Object.keys(pagesData).length > 0) {
+          window.location.hash = '#home';
+        }
+      }
+    }
+
+    function syncNavigationState(activeHash) {
+      document.querySelectorAll('.tree-link').forEach(link => {
+        const linkHash = link.getAttribute('href').substring(1);
+        if (linkHash === activeHash) {
+          link.classList.add('active');
+          const parentNode = link.closest('.tree-node');
+          if (parentNode) parentNode.open = true;
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Highlight settings gear icon if active
+      const cog = document.getElementById('settings-cog');
+      if (cog) {
+        if (activeHash === 'settings') {
+          cog.style.color = '#fff';
+        } else {
+          cog.style.color = '';
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', handleRoute);
+
+    // --------------------------------------------------------------------------
+    // Side Menu Slide-out Toggle Logic
+    // --------------------------------------------------------------------------
+    const sidebar = document.getElementById('sidebar-panel');
+    const overlay = document.getElementById('blur-overlay');
+    const menuBtn = document.getElementById('menu-toggle-btn');
+
+    function toggleSidebar() {
+      const isOpen = sidebar.classList.toggle('open');
+      overlay.classList.toggle('active', isOpen);
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+
+    menuBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    
+    // Close sidebar immediately when settings gear is chosen
+    document.getElementById('settings-cog').addEventListener('click', closeSidebar);
+
+    // --------------------------------------------------------------------------
+    // Accessibility & Interface Theme Controllers
+    // --------------------------------------------------------------------------
+    function toggleOption(type) {
+      if (type === 'cursor-glow') {
+        document.body.classList.toggle('cursor-glow-active');
+        setCookie('cursor-glow', document.body.classList.contains('cursor-glow-active'));
+      } else if (type === 'dark-mode') {
+        document.body.classList.remove('light-mode');
+        setCookie('light-mode', 'false');
+      } else if (type === 'light-mode') {
+        document.body.classList.add('light-mode');
+        setCookie('light-mode', 'true');
+      }
+      syncWidgetState();
+    }
+
+    function updateSetting(key, value) {
+      if (key === 'glow-intensity') {
+        document.documentElement.style.setProperty('--glow-intensity', value);
+        setCookie('glow-intensity', value);
+      } else if (key === 'glow-diameter') {
+        document.documentElement.style.setProperty('--glow-diameter', value + 'px');
+        setCookie('glow-diameter', value);
+      } else if (key === 'bg-color-1') {
+        document.documentElement.style.setProperty('--bg-color-1', value);
+        setCookie('bg-color-1', value);
+      } else if (key === 'bg-color-2') {
+        document.documentElement.style.setProperty('--bg-color-2', value);
+        setCookie('bg-color-2', value);
+      } else if (key === 'bg-color-3') {
+        document.documentElement.style.setProperty('--bg-color-3', value);
+        setCookie('bg-color-3', value);
+      } else if (key === 'bg-angle') {
+        document.documentElement.style.setProperty('--bg-angle', value + 'deg');
+        setCookie('bg-angle', value);
+      }
+    }
+
+    function syncWidgetState() {
+      const glowToggle = document.getElementById('glow-toggle');
+      const darkToggle = document.getElementById('dark-theme-toggle');
+      const lightToggle = document.getElementById('light-theme-toggle');
+      
+      if (glowToggle) {
+        glowToggle.classList.toggle('active', document.body.classList.contains('cursor-glow-active'));
+      }
+      if (darkToggle) {
+        darkToggle.classList.toggle('active', !document.body.classList.contains('light-mode'));
+      }
+      if (lightToggle) {
+        lightToggle.classList.toggle('active', document.body.classList.contains('light-mode'));
+      }
+
+      // Sync color and range inputs when Settings is rendered in view
+      const intensityInput = document.getElementById('intensity-input');
+      const diameterInput = document.getElementById('diameter-input');
+      const color1Input = document.getElementById('color1-input');
+      const color2Input = document.getElementById('color2-input');
+      const color3Input = document.getElementById('color3-input');
+      const angleInput = document.getElementById('angle-input');
+
+      if (intensityInput) intensityInput.value = getCookie('glow-intensity') || '0.15';
+      if (diameterInput) diameterInput.value = getCookie('glow-diameter') || '120';
+      if (color1Input) color1Input.value = getCookie('bg-color-1') || '#180B34';
+      if (color2Input) color2Input.value = getCookie('bg-color-2') || '#0B1934';
+      if (color3Input) color3Input.value = getCookie('bg-color-3') || '#1A031E';
+      if (angleInput) angleInput.value = getCookie('bg-angle') || '135';
+    }
+
+    // --------------------------------------------------------------------------
+    // Performant Cursor Glow Tracking (Updates variables relative to containers)
+    // --------------------------------------------------------------------------
+    document.addEventListener('mousemove', (e) => {
+      if (!document.body.classList.contains('cursor-glow-active')) return;
+      
+      const targetGlass = e.target.closest('.liquid-glass');
+      if (targetGlass) {
+        const rect = targetGlass.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        targetGlass.style.setProperty('--mouse-x', `${x}px`);
+        targetGlass.style.setProperty('--mouse-y', `${y}px`);
+      }
+    });
+
+    // --------------------------------------------------------------------------
+    // Client-side Full Content Search Engine
+    // --------------------------------------------------------------------------
+    const searchInput = document.getElementById('global-search');
+    const searchResults = document.getElementById('search-results');
+
+    // Strip HTML formatting blocks cleanly using browser parser standard
+    function stripHtmlTags(htmlString) {
+      const parser = new DOMParser();
+      const parsedDoc = parser.parseFromString(htmlString, 'text/html');
+      return parsedDoc.body.textContent || parsedDoc.body.innerText || "";
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+
+      if (!query) {
+        searchResults.classList.remove('active');
+        searchResults.innerHTML = '';
+        return;
+      }
+
+      const matchingResults = [];
+
+      for (const [routeKey, page] of Object.entries(pagesData)) {
+        const plainText = stripHtmlTags(page.html).toLowerCase();
+        const titleMatches = page.title.toLowerCase().includes(query);
+        const contentMatches = plainText.includes(query);
+
+        if (titleMatches || contentMatches) {
+          // Identify matches, extract readable string excerpt around occurrences
+          let matchedExcerpt = "";
+          if (contentMatches) {
+            const matchIndex = plainText.indexOf(query);
+            const excerptStart = Math.max(0, matchIndex - 30);
+            const excerptEnd = Math.min(plainText.length, matchIndex + query.length + 40);
+            
+            matchedExcerpt = (excerptStart > 0 ? "..." : "") + 
+                             plainText.substring(excerptStart, excerptEnd) + 
+                             (excerptEnd < plainText.length ? "..." : "");
+          } else {
+            // Title match only fallback excerpt
+            matchedExcerpt = stripHtmlTags(page.html).substring(0, 70) + "...";
+          }
+
+          matchingResults.push({
+            hash: routeKey,
+            title: page.title,
+            excerpt: matchedExcerpt
+          });
+        }
+      }
+
+      displaySearchResults(matchingResults);
+    });
+
+    function displaySearchResults(results) {
+      searchResults.innerHTML = '';
+
+      if (results.length === 0) {
+        const fallbackContainer = document.createElement('div');
+        fallbackContainer.className = 'search-no-results';
+        fallbackContainer.textContent = 'No matching system files found.';
+        searchResults.appendChild(fallbackContainer);
+      } else {
+        results.forEach(result => {
+          const itemLink = document.createElement('a');
+          itemLink.href = `#${result.hash}`;
+          itemLink.className = 'search-result-item';
+
+          const titleHeader = document.createElement('div');
+          titleHeader.className = 'search-result-title';
+          titleHeader.textContent = result.title;
+
+          const excerptBody = document.createElement('div');
+          excerptBody.className = 'search-result-excerpt';
+          excerptBody.textContent = result.excerpt;
+
+          itemLink.appendChild(titleHeader);
+          itemLink.appendChild(excerptBody);
+
+          // Prevent race condition where DOM collapse cancels browser navigation
+          itemLink.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            window.location.hash = `#${result.hash}`; // Programmatically routing the system hash
+            searchInput.value = '';
+            searchResults.classList.remove('active');
+          });
+
+          searchResults.appendChild(itemLink);
         });
+      }
 
+      searchResults.classList.add('active');
+    }
 
-        // 3. Event listener for the toggle handle
-        toggleHandle.addEventListener('click', toggleSidebar);
-
-    </script>
+    // Dismiss active search dropdown when clicking outside component boundaries
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.remove('active');
+      }
+    });
+  </script>
 </body>
 </html>
